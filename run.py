@@ -12,11 +12,16 @@ from control_gen_utils import control_generate_caption
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 from torch.utils.data import Dataset, DataLoader
 
+import nltk
+nltk.download('averaged_perceptron_tagger')
+nltk.download('sentiwordnet')
+nltk.download('wordnet')
+
 def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--batch_size", type=int, default=2, help = "support batch_size>1 currently.")
+    parser.add_argument("--batch_size", type=int, default=1, help = "support batch_size>1 currently.")
     parser.add_argument("--device", type=str,
                         default='cuda',choices=['cuda','cpu'])
 
@@ -53,7 +58,7 @@ def get_args():
     ## Hyperparameters
     parser.add_argument("--sentence_len", type=int, default=10)
     parser.add_argument("--candidate_k", type=int, default=200)
-    parser.add_argument("--alpha", type=float, default=0.02, help="weight for fluency")
+    parser.add_argument("--alpha", type=float, default=0.5, help="weight for fluency")
     parser.add_argument("--beta", type=float, default=2.0, help="weight for image-matching degree")
     parser.add_argument("--gamma", type=float, default=5.0, help="weight for controllable degree")
     parser.add_argument("--lm_temperature", type=float, default=0.1)
@@ -62,7 +67,7 @@ def get_args():
     ## Models and Paths
     parser.add_argument("--lm_model", type=str, default='bert-base-uncased',
                         help="Path to language model") # bert,roberta
-    parser.add_argument("--match_model", type=str, default='clip-vit-base-patch32',
+    parser.add_argument("--match_model", type=str, default='openai/clip-vit-base-patch32',
                         help="Path to Image-Text model")  # clip,align
     parser.add_argument("--caption_img_path", type=str, default='./examples/',
                         help="file path of images for captioning")
