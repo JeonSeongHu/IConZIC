@@ -1,3 +1,5 @@
+[![new Colab Notebook for OpenZICs](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1MyjEAuygQblYwTjK67ATo7XALuHkkiLa?usp=sharing)
+
 # ConZIC
 **[CVPR 2023][ConZIC: Controllable Zero-shot Image Captioning by Sampling-Based Polishing](https://arxiv.org/abs/2303.02437)**
 <br/>
