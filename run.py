@@ -8,7 +8,6 @@ import torch
 
 from clip.clip import CLIP
 from gen_utils import generate_caption
-from control_gen_utils import control_generate_caption
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 from torch.utils.data import Dataset, DataLoader
 
@@ -97,25 +96,6 @@ def run_caption(args, img_name, img_pil_list, lm_model, lm_tokenizer, clip, toke
                 all_results[iter_id][image_id] = gen_text_list[jj]
     return all_results
 
-def run_control(run_type, args, img_name, img_pil_list, lm_model, lm_tokenizer, clip, token_mask, logger, all_results):
-
-    image_instance = img_pil_list
-    gen_texts, clip_scores = control_generate_caption(img_name, lm_model, clip, lm_tokenizer, image_instance, token_mask, logger,
-                                prompt=args.prompt, batch_size=args.batch_size, max_len=args.sentence_len,
-                                top_k=args.candidate_k, temperature=args.lm_temperature,
-                                max_iter=args.num_iterations, alpha=args.alpha,
-                                beta=args.beta, gamma=args.gamma,
-                                ctl_type = args.control_type, style_type=args.sentiment_type,pos_type=args.pos_type, generate_order=args.order)
-
-    for iter_id, gen_text_list in enumerate(gen_texts):
-        for jj in range(len(gen_text_list)):
-            image_id = img_name[jj].split(".")[0]
-            if all_results[iter_id]==None:
-                all_results[iter_id] = {image_id: gen_text_list[jj]}
-            else:
-                all_results[iter_id][image_id] = gen_text_list[jj]
-    return all_results
-
 if __name__ == "__main__":
     args = get_args()
     set_seed(args.seed)
@@ -189,8 +169,6 @@ if __name__ == "__main__":
             logger.info(f"The {batch_idx+1}-th batch:")
             if args.run_type == 'caption':
                 all_results = run_caption(args, name_batch_list, img_batch_pil_list, lm_model, lm_tokenizer, clip, token_mask, logger, all_results)
-            elif args.run_type == 'controllable':
-                all_results = run_control(run_type, args, name_batch_list, img_batch_pil_list,lm_model, lm_tokenizer, clip, token_mask, logger, all_results)
             else:
                 raise Exception('run_type must be caption or controllable!')
 
