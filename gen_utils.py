@@ -146,7 +146,7 @@ def general_generation(generate_order, model_type, img_name, model, clip, proces
                 if best_clip_score_list[jj] < clip_score_sequence_batch[jj]:
                     best_clip_score_list[jj] = clip_score_sequence_batch[jj]
                     best_caption_list[jj] = cur_text_batch[jj]
-                logger.info(f"iter {iter_num + 1}, The {jj + 1}-th image: {img_name[jj]},"
+                logger.info(f"iter {iter_num + 1}, The {jj + 1}-th image: {img_name[jj]} | "
                             f"clip score {clip_score_sequence_batch[jj]:.3f}: " + for_print_batch[jj])
         gen_texts_list.append(cur_text_batch)
         clip_score_sequence.append(clip_score_sequence_batch)
