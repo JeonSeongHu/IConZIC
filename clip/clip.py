@@ -4,16 +4,16 @@ from torch import nn
 from PIL import Image
 
 class CLIP(nn.Module):
-    def __init__(self, model_name):
+    def __init__(self, model_name, korean):
         super(CLIP, self).__init__()
         # model name: e.g. openai/clip-vit-base-patch32
         print ('Initializing CLIP model...')
         from transformers import CLIPProcessor, CLIPModel
-        self.model = CLIPModel.from_pretrained(model_name)
+        self.model = CLIPModel.from_pretrained(model_name, from_flax=korean)
         self.model.eval()
-        self.processor = CLIPProcessor.from_pretrained(model_name)
+        self.processor = CLIPProcessor.from_pretrained(model_name, from_flax=korean)
         from transformers import CLIPTokenizer
-        self.tokenizer = CLIPTokenizer.from_pretrained(model_name)
+        self.tokenizer = CLIPTokenizer.from_pretrained(model_name, from_flax=korean)
         self.cuda_has_been_checked = False
         print ('CLIP model initialized.')
 
