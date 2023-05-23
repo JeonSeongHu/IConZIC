@@ -177,11 +177,11 @@ def run_caption(args, name_batch_list, url, img_batch_pil_list, lm_model, lm_tok
                                               beta=args.beta,
                                               generate_order=generate_order)
 
+    all_results += [dict() for _ in range(args.batch_size)]
     for iter, (gen_texts_iters, clip_scores_iters) in enumerate(zip(gen_texts, clip_scores)):
-        all_results.append({"url": url[iter], "gt": name_batch_list[iter]})
-        for gen_text_iters, clip_score_iters in zip(gen_texts_iters, clip_scores_iters):
-            all_results[-1][f"{iter}_clip"] = clip_score_iters
-            all_results[-1][f"{iter}_text"] = gen_text_iters
+        for idx, (gen_text_iters, clip_score_iters) in enumerate(zip(gen_texts_iters, clip_scores_iters)):
+            all_results[-(idx+1)][f"{iter}_clip"] = clip_score_iters
+            all_results[-(idx+1)][f"{iter}_text"] = gen_text_iters
 
     return all_results
 
@@ -231,30 +231,32 @@ def run(batch_size=2, alpha=0.02, beta=2, num_candidate=200, num_iter=20, len_se
     logger.info(f"Run type:{run_type}")
     logger.info(args)
 
+
     # Load pre-trained model (weights)
+
+    if korean:
+        args.match_model = "koclip/koclip-base"
     if model_type == "ViLT":
         print("ViLT")
         lm_model = ViltForMaskedLM.from_pretrained("dandelin/vilt-b32-mlm")
         lm_tokenizer = ViltProcessor.from_pretrained("dandelin/vilt-b32-mlm")
         lm_model.eval()
-        clip = CLIP(args.match_model)
-        clip.eval()
+
 
     elif korean:
         print("Korean")
         lm_model = AutoModelForMaskedLM.from_pretrained("snunlp/KR-BERT-char16424")
         lm_tokenizer = AutoTokenizer.from_pretrained("snunlp/KR-BERT-char16424")
         lm_model.eval()
-        clip = CLIP("koclip/koclip-base", korean=True)
 
     else:
         print("BERT")
         lm_model = AutoModelForMaskedLM.from_pretrained("bert-base-uncased")
         lm_tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
         lm_model.eval()
-        clip = CLIP(args.match_model)
-        clip.eval()
 
+    clip = CLIP(args.match_model,korean)
+    clip.eval()
     lm_model = lm_model.to(args.device)
     clip = clip.to(args.device)
 
@@ -293,10 +295,10 @@ def run(batch_size=2, alpha=0.02, beta=2, num_candidate=200, num_iter=20, len_se
             if os.path.exists(save_dir) == False:
                 os.makedirs(save_dir)
 
-            pd.DataFrame(all_results).to_csv("result.csv")
+            pd.DataFrame(all_results).to_csv(os.path.join(save_dir, "result.csv"))
 
 import gc
 gc.collect()
 torch.cuda.empty_cache()
 
-run(batch_size=2, num_iter=15, num_candidate=20, len_sentence=12, alpha=0.02, generate_order="shuffle", model_type="BERT", korean=False)
+run(batch_size=64, num_iter=15, num_candidate=10, len_sentence=12, alpha=0.02, generate_order="shuffle", model_type="ViLT", korean=False)
