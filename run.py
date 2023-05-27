@@ -84,17 +84,6 @@ def get_args():
 # @title Select types and parameters
 args = get_args()
 
-# RunType = 'caption' # @param ['caption', 'controllable']
-# ControlType = 'sentiment' # @param ["sentiment","pos"]
-# SentimentType = 'positive' # @param ["positive", "negative"]
-# Order = 'sequential' # @param ['sequential', 'shuffle', 'random']
-# Alpha = 0.5 #@param {type:"slider", min:0, max:1, step:0.01}
-# Beta = 2 # @param {type:"slider", min:0, max:5, step:0.5}
-# Gamma = 0 # @param {type:"slider", min:0, max:10, step:0.5}
-# SamplesNum = 1 # @param {type:"slider", min:1, max:5, step:1}
-# Length = 9 # @param {type:"slider", min:5, max:15,  step:1}
-# NumIterations = 20 # @param {type:"slider", min:1, max:40, step:1}
-
 
 import pandas as pd
 import json
@@ -124,13 +113,34 @@ data = pd.merge(left = annotations , right = images, how = "inner", on = "image_
 
 
 class CocoCaptionDataset(Dataset):
-    def __init__(self, dataframe):
+    def __init__(self, dataframe, size):
         self.dataframe = dataframe
         self.transform = transforms.ToTensor()
+        self.size = size
+        os.makedirs("data/", exist_ok=True)
 
     def __len__(self):
         # return len(self.dataframe)
-        return 1000
+        return self.size
+
+    # def __getitem__(self, index):
+    #     row = self.dataframe.iloc[index]
+    #     caption = row['caption']
+    #     coco_url = row['coco_url']
+    #
+    #     # Get image filename from coco_url
+    #     image_filename = f"{index:0>8}.jpg"
+    #     image_path = os.path.join("data/", image_filename)
+    #
+    #     # Download image if not already downloaded
+    #     if not os.path.exists(image_path):
+    #         Image.open(requests.get(coco_url, stream=True).raw).convert("RGB").save(image_path)
+    #
+    #     # Load image from file
+    #     image = Image.open(image_path).convert("RGB")
+    #     image = self.transform(image)
+    #
+    #     return image, caption, coco_url
 
     def __getitem__(self, index):
         row = self.dataframe.iloc[index]
@@ -144,8 +154,7 @@ class CocoCaptionDataset(Dataset):
         return images, captions,coco_url
 
 
-# coco_dataset = CocoCaptionDataset(data)
-# train_loader = DataLoader(coco_dataset, batch_size=10, shuffle=False, drop_last=True, collate_fn=coco_dataset.collate_fn)
+
 
 # for imgs, caps in train_loader:
 #     for img, cap in zip(imgs, caps):
@@ -205,7 +214,7 @@ def stopandmask(tokenizer, model_type):
 
 
 def run(batch_size=2, alpha=0.02, beta=2, num_candidate=200, num_iter=20, len_sentence=20, model_type="ViLT",
-        generate_order="sequential", korean=True):
+        generate_order="sequential", size=256, korean=True):
     args = get_args()
     args.alpha = alpha
     args.beta = beta
@@ -265,7 +274,7 @@ def run(batch_size=2, alpha=0.02, beta=2, num_candidate=200, num_iter=20, len_se
 
     img_dir = args.caption_img_path
 
-    coco_dataset = CocoCaptionDataset(data)
+    coco_dataset = CocoCaptionDataset(data, size)
     coco_dataset = coco_dataset
     train_loader = DataLoader(coco_dataset, batch_size=args.batch_size, shuffle=False, drop_last=True,
                               collate_fn=coco_dataset.collate_fn)
@@ -289,7 +298,7 @@ def run(batch_size=2, alpha=0.02, beta=2, num_candidate=200, num_iter=20, len_se
                                           model_type=model_type,
                                           generate_order=generate_order)
 
-            save_dir = f"results/model_type_{model_type}_order_{args.order}_len{args.sentence_len}" \
+            save_dir = f"results/model_type_{model_type}_order_{args.order}_len{args.sentence_len}_alpha{args.alpha}_iters{args.num_iterations}" \
                        f"_topk{args.candidate_k}_alpha{args.alpha}/sample_{sample_id}"
 
             if os.path.exists(save_dir) == False:
@@ -300,5 +309,19 @@ def run(batch_size=2, alpha=0.02, beta=2, num_candidate=200, num_iter=20, len_se
 import gc
 gc.collect()
 torch.cuda.empty_cache()
-
-run(batch_size=64, num_iter=15, num_candidate=10, len_sentence=12, alpha=0.02, generate_order="shuffle", model_type="ViLT", korean=False)
+#
+# gc.collect()
+# torch.cuda.empty_cache()
+# # run(batch_size=32,num_iter=15, num_candidate=50, len_sentence=12, alpha=0.02, generate_order="shuffle", model_type="BERT", korean=False, size=1000)
+# gc.collect()
+# torch.cuda.empty_cache()
+# run(batch_size=16,num_iter=15, num_candidate=100, len_sentence=12, alpha=0.02, generate_order="shuffle", model_type="ViLT", korean=False, size=1000)
+# gc.collect()
+# torch.cuda.empty_cache()
+# run(batch_size=16,num_iter=15, num_candidate=100, len_sentence=12, alpha=0.02, generate_order="shuffle", model_type="BERT", korean=False, size=1000)
+# gc.collect()
+# torch.cuda.empty_cache()
+# run(batch_size=4,num_iter=15, num_candidate=200, len_sentence=12, alpha=0.02, generate_order="shuffle", model_type="ViLT", korean=False, size=1000)
+gc.collect()
+torch.cuda.empty_cache()
+run(batch_size=8, num_iter=15, num_candidate=200, len_sentence=12, alpha=0.02, generate_order="shuffle", model_type="BERT", korean=False, size=1000)
