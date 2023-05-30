@@ -1,13 +1,8 @@
 # IConZIC
-**[Korea University COSE461 Final Project][IConZIC : Image-Conditioned Zero-shot Image Captioning by Vision-Language Pre-Trained Model)**
+**[Korea University COSE461 Final Project]<br/>
+[IConZIC : Image-Conditioned Zero-shot Image Captioning by Vision-Language Pre-Trained Model)**
 <br/>
-Seonghu Jeon
-<br/>
-Jiwon Jeong
-<br/>
-Byungwoo Jeon
-<br/>
-Seongmin Ko
+Seonghu Jeon, Jiwon Jeong, Byungwoo Jeon. Seongmin Ko
 <br/>
 
 ***
