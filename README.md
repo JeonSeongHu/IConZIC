@@ -2,38 +2,18 @@
 **[Korea University COSE461 Final Project][IConZIC : Image-Conditioned Zero-shot Image Captioning by Vision-Language Pre-Trained Model)**
 <br/>
 Seonghu Jeon
+<br/>
 Jiwon Jeong
+<br/>
 Byungwoo Jeon
+<br/>
 Seongmin Ko
 <br/>
-
-[comment]: <> ([![Project Website]&#40;https://img.shields.io/badge/Project-Website-orange&#41;]&#40;https://tuneavideo.github.io/&#41;)
-[![arXiv](https://img.shields.io/badge/arXiv-2303.02437-b31b1b.svg)](https://arxiv.org/abs/2303.02437)
-[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/jiaqingj/ConZIC)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1MyjEAuygQblYwTjK67ATo7XALuHkkiLa?usp=sharing)
-
-### News
-* [2023/4] Adding demo on Huggingface Space and Colab!
-* [2023/3] ConZIC is publicly released!
 
 ***
 ### Framework
 ![](paper_images/framework.jpg)
 
-### Example of length control
-![](paper_images/lengthcontrol.jpg)
-
-### Example of sentiment control
-![](paper_images/sentimentcontrol.jpg)
-
-### Example of part-of-speech control
-![](paper_images/poscontrol.jpg)
-
-### Example of diverse captioning
-![](paper_images/diversecaptioning.jpg)
-
-### Example of various image styles with world knowledge
-![](paper_images/moreimagestyles.jpg)
 
 
 ## DEMO
